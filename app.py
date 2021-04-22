@@ -26,7 +26,7 @@ def user_input_var():
     else: heart_disease = 0
     ever_married = st.radio("Are you Married?", ["Yes", "No"], 1)
     work_type = st.radio("Enter your Work Type", ["Children", "Never Worked", "Self Employed", "Government Job", "Private Job"],2)
-    if work_type == "Children": work_type = "children"
+    if work_type == "Student": work_type = "children"
     elif work_type == "Never Worked": work_type = "Never_worked"
     elif work_type == "Self Employed": work_type = "Self-employed"
     elif work_type == "Government Job": work_type = "Govt_job"
