@@ -66,10 +66,10 @@ ct = make_column_transformer(
     remainder='passthrough')
 X = ct.fit_transform(X)
 
-sm = SMOTE(random_state=42)
-X, y = sm.fit_resample(X, y)
-
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state = 42, stratify=y)
+
+sm = SMOTE(random_state=42)
+X_train, y_train = sm.fit_resample(X_train, y_train)
 
 model = RandomForestClassifier(n_estimators= 150, criterion= 'entropy', random_state=42)
 model.fit(X_train,y_train)
