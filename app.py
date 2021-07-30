@@ -1,14 +1,20 @@
 import numpy as np
 import pandas as pd
 import streamlit as st 
-from sklearn.impute import SimpleImputer
 from sklearn.compose import make_column_transformer
 from sklearn.preprocessing import OneHotEncoder
 from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 
 stroke =  pd.read_csv('healthcare-dataset-stroke-data.csv').drop(labels=['id'], axis=1)
+stroke.drop(stroke[stroke.gender=='Other'].index, inplace=True)
+stroke.replace(np.nan, stroke.bmi.median(),inplace=True)
+stroke.smoking_status.replace({'never smoked':0,'Unknown':np.nan,'formerly smoked':1,'smokes':1}, inplace=True)
+stroke.smoking_status.replace(np.nan, stroke.smoking_status.value_counts().argmax(), inplace=True)
+stroke.work_type.replace({'Never_worked':'Student',"children":'Student',
+                         "Private":'Private-Job', 'Self-employed':'Self-Employed',
+                         'Govt_job':'Govt-Job'},inplace=True)
 
 st.write("""
 # Stroke Prediction
@@ -25,19 +31,17 @@ def user_input_var():
     if heart_disease == "Yes": heart_disease = 1
     else: heart_disease = 0
     ever_married = st.radio("Are you Married?", ["Yes", "No"], 1)
-    work_type = st.radio("Enter your Work Type", ["Children", "Never Worked", "Self Employed", "Government Job", "Private Job"],2)
-    if work_type == "Student": work_type = "children"
-    elif work_type == "Never Worked": work_type = "Never_worked"
-    elif work_type == "Self Employed": work_type = "Self-employed"
-    elif work_type == "Government Job": work_type = "Govt_job"
-    else: work_type = "Private"
+    work_type = st.radio("Enter your Work Type", ["Student", "Self Employed", "Government Job", "Private Job"],2)
+    if work_type == "Student": work_type = "Student"
+    elif work_type == "Self Employed": work_type = "Self-Employed"
+    elif work_type == "Government Job": work_type = "Govt-Job"
+    else: work_type = "Private-Job"
     Residence_type = st.radio("Enter your Residence type", ["Urban", "Rural"], 0), 
     avg_glucose_level = st.slider("Enter your Average Glucose level", 50, 400, 80)
     bmi =  st.slider("Enter your BMI", 15, 50, 20)
-    smoking_status = st.radio("Are you a Smoker?", ["Former Smoker", "Never Smoked", "Smokes"],1)
-    if smoking_status == "Former Smoker": smoking_status = "formerly smoked"
-    elif smoking_status == "Never Smoked": smoking_status = "never smoked"
-    else: smoking_status = "smokes"
+    smoking_status = st.radio("Are you a Smoker?", ["Yes", "No"],1)
+    if smoking_status == "Yes": smoking_status = 1
+    else: smoking_status = 0
     data = {'gender': gender,
             'age': age, 
             'hypertension': hypertension,
@@ -57,23 +61,18 @@ df = user_input_var()
 X = stroke.drop('stroke', axis='columns').values
 y = stroke['stroke'].values
 
-imputer = SimpleImputer(strategy='median')
-imputer.fit(X[:,8:9])
-X[:,8:9] = imputer.transform(X[:,8:9])
-
 ct = make_column_transformer(
     (OneHotEncoder(), [0,4,5,6,9]),
     remainder='passthrough')
 X = ct.fit_transform(X)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state = 42, stratify=y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state = 32, stratify=y)
 
 sm = SMOTE(random_state=42)
 X_train, y_train = sm.fit_resample(X_train, y_train)
 
-model = RandomForestClassifier(n_estimators= 150, criterion= 'entropy', random_state=42)
+model = LogisticRegression()
 model.fit(X_train,y_train)
-
 
 if st.button('Predict'):
     df = ct.transform(df)
