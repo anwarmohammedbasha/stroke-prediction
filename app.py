@@ -36,7 +36,7 @@ def user_input_var():
     elif work_type == "Self Employed": work_type = "Self-Employed"
     elif work_type == "Government Job": work_type = "Govt-Job"
     else: work_type = "Private-Job"
-    Residence_type = st.radio("Enter your Residence type", ["Urban", "Rural"], 0), 
+    residence_type = st.radio("Enter your Residence type", ["Urban", "Rural"], 0), 
     avg_glucose_level = st.slider("Enter your Average Glucose level", 50, 400, 80)
     bmi =  st.slider("Enter your BMI", 15, 50, 20)
     smoking_status = st.radio("Are you a Smoker?", ["Yes", "No"],1)
@@ -48,7 +48,7 @@ def user_input_var():
             'heart_disease': heart_disease,
             'ever_married': ever_married, 
             'work_type': work_type,
-            'Residence_type': Residence_type,
+            'Residence_type': residence_type,
             'avg_glucose_level': avg_glucose_level,
             'bmi': bmi,
             'smoking_status': smoking_status}
@@ -62,7 +62,7 @@ X = stroke.drop('stroke', axis='columns').values
 y = stroke['stroke'].values
 
 ct = make_column_transformer(
-    (OneHotEncoder(), [0,4,5,6,9]),
+    (OneHotEncoder(), [0,4,5,6]),
     remainder='passthrough')
 X = ct.fit_transform(X)
 
