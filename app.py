@@ -23,7 +23,7 @@ Based on input parameters such as gender, age, various diseases, and smoking sta
 
 def user_input_var():
     gender = st.radio("Enter your Gender",["Male", "Female"])
-    age = st.slider("Age", 18, 80, 25)
+    age = st.slider("Age", 18, 70, 25)
     hypertension = st.radio("Do you suffer from high blood pressure?", ["Yes","No"], 1)
     if hypertension == "Yes": hypertension = 1
     else: hypertension = 0
