@@ -5,3 +5,5 @@ Based on input parameters such as gender, age, various diseases, and smoking sta
 Data Source: https://www.kaggle.com/fedesoriano/stroke-prediction-dataset
 
 App: https://share.streamlit.io/anwarmohammedbasha/stroke-prediction/main/app.py
+
+Short URL for Repo: shorturl.at/vPQZ4
